@@ -343,11 +343,11 @@ def logic():
         btc_val_final = str(''.join(btc_val))
 
         if mixed_today > record_check():
-            daily = f"""{latest_date} CoinShuffle++ transaction volume was: {cspp_current} $DCR / {usd_display} $USD
+            daily = f"""{latest_date} StakeShuffle transaction volume was: {cspp_current} $DCR / {usd_display} $USD
             {sup_display} % of Circulating Supply Mixed Yesterday *NEW ATH!! (1 DCR = {usd_value} USD / {btc_val_final} BTC)
              Total staked in USD: {staked_display} #dcr $dcr #DAO #Decred #bitcoin #btc #DCRDEX"""
         else:
-            daily = f"""{latest_date} CoinShuffle++ transaction volume was: {cspp_current} $DCR / {usd_display} $USD
+            daily = f"""{latest_date} StakeShuffle transaction volume was: {cspp_current} $DCR / {usd_display} $USD
             {sup_display} % of Circulating Supply Mixed Yesterday (1 DCR = {usd_value} USD / {btc_val_final} BTC)
              Total staked in USD: {staked_display} #dcr $dcr #DAO #Decred #bitcoin #btc #DCRDEX"""
 
