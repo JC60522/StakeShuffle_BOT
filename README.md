@@ -1,5 +1,5 @@
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-This repository contains the files needed to run https://twitter.com/StakeShuffle_
+This repository contains the files needed to run <https://twitter.com/StakeShuffle_>
 
 Apart from the files you need a twitter developer account with read and write permissions activated.
 
