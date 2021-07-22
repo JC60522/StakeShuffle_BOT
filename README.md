@@ -5,7 +5,7 @@ Apart from the files you need a twitter developer account with read and write pe
 
 The .csv data files needs to be saved in the same location/directory as stakeShuffle_bot.py.
 
-The data files will need to be updated to one calender day prior to the intended(new) scraping range. At the time of posting this README the .csv files is up to date. 
+The data files will need to be updated to one calender day prior to the intended(new) scraping/broadcast range. At the time of posting this README the .csv files is up to date. 
 
 Feel free to use csvUpdate.py in this repository to update the csv files. Make sure csvUpdate.py as well as all the csv files are saved in the same directory
 on your system. Its a user friendly GUI(graphical user interface) to assist in updating the csv data-files in this repo. I have only tested in on Linux. 
