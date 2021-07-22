@@ -14,7 +14,7 @@ it from within the terminal.
 
 See { csv_update1.png ; csv_update2.png ; csv_update3.png ; csv_update4.png } in this repository for screenshot examples on how to use this GUI helper.
 
-Be sure to pip install the following python libraries otherwise you will likely get errors when running the .py files in this repository.
+Be sure to pip install the following python libraries otherwise you will likely get errors when running the python files in this repository.
 
 -easygui
 -progressbar
