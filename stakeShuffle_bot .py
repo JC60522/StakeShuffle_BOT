@@ -202,7 +202,6 @@ def record_check():
     return prev_rec
 
 
-
 def staked_in_usd():
     url = 'https://explorer.dcrdata.org'
     page = urlopen(url)
@@ -220,7 +219,6 @@ def staked_in_usd():
     staked_val = staked_val.replace(',','')
     staked_usd = round(int(staked_val) * usd_value)
     return staked_usd
-
 
 
 def first_check():
@@ -242,6 +240,26 @@ def start_block1():
     return int(data[-2])
 
 
+def csv_prune(doc_name):
+    with open(doc_name, 'r+') as f:
+        data = f.read()
+        data = data.split('\n')
+        if len(data) > 36000:
+            for i in range(0, 18000):
+                data.reverse()
+                data.pop()
+                data.reverse()
+            with open(doc_name, 'r+') as f:
+                f.truncate(0)
+                f.seek(0)
+                for i in data:
+                    f.write(str(i))
+                    f.write("\n")
+            print("csv prune completed.")
+        else:
+            print(f' {doc_name} file size still in bounds.')
+
+
 def logic():
     mixed_list = []
     url_block = []
@@ -256,6 +274,10 @@ def logic():
 
     if time_value == 172800:
         print('startup conditional satisfied')
+        csv_prune('dates_p1.csv')
+        csv_prune('mixed_p1.csv')
+        csv_prune('blocks_p1.csv')
+        csv_prune('total_p1.csv')
         proposed_block = proposed_block_url()
         start_block = start_block1()
         proposed_block = int(proposed_block) + 2
