@@ -381,6 +381,7 @@ def logic():
         df_mixed = df_mixed.astype(int)
         df_mixed = df_mixed.div(1000000)
         df_data = pd.concat([df_dates, df_mixed, df_total], axis=1)
+        df_data['Total-Mixed'] = df_data['Total'] - df_data['Mixed']
         df_agg = df_data.groupby(['Dates'], sort=False).sum()
         df_agg = df_agg.tail(31)
         df_agg = df_agg.reset_index()
@@ -389,7 +390,7 @@ def logic():
         df_acc = list(accumulate(df_agg['Mixed']))
 
         m = df_agg['Mixed'].values.tolist()
-        t = df_agg['Total'].values.tolist()
+        t = df_agg['Total-Mixed'].values.tolist()
         d2 = df_agg['Dates'].values.tolist()
         test_list2 = []
         day = []
