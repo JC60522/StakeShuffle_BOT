@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import tweepy
 import pandas as pd
+import matplotlib.patches as mpatches
 from urllib.request import urlopen
 from bs4 import BeautifulSoup as bs
 from datetime import datetime, timezone
@@ -11,7 +12,7 @@ from itertools import accumulate
 
 auth = tweepy.OAuthHandler('###################', '#############################################')
 auth.set_access_token('#################-#################', '########################################')
-api = tweepy.API(auth)
+api = tweepy.API(auth, wait_on_rate_limit=True)
 
 def proposed_block_url():
     url = 'https://explorer.dcrdata.org'
@@ -139,7 +140,7 @@ def usd_val(mixed_today):
 
 
 def twitter_data():
-    api = tweepy.API(auth)
+    api = tweepy.API(auth, wait_on_rate_limit=True)
     client_id = api.me()
     x = api.user_timeline(id = client_id, count = 1, tweet_mode='extended')
     tweet_body = [tweet.full_text for tweet in x]
@@ -214,9 +215,12 @@ def staked_in_usd():
     staked_list.pop(-1)
     stake_index1 = staked_list.index('>')
     stake_index2 = staked_list.index('<')
+    global staked_val
     staked_val = staked_list[stake_index1 +1:stake_index2]
     staked_val = str("".join(staked_val))
     staked_val = staked_val.replace(',','')
+    global stakedP
+    stakedP = (round(int(staked_val) / coin_supply())) * 100
     staked_usd = round(int(staked_val) * usd_value)
     return staked_usd
 
@@ -238,6 +242,97 @@ def start_block1():
         data = f.read()
         data = data.split('\n')
     return int(data[-2])
+
+
+def utcAndUsd():
+    timeAndPrice = []
+    currentTs = current_utc_time()
+    prevDay = currentTs - 86400
+    prevMonth = currentTs - 2678400
+    global ts3
+    global ts2
+    ts3 = datetime.fromtimestamp(prevDay).strftime('%b %d %Y')
+    ts2 = datetime.fromtimestamp(prevMonth).strftime('%b %d %Y')
+    ts1 = ts3.split(' ')
+    timeAndPrice.append(f"{ts1[0]} {ts1[1]}, {ts1[2]}', '${usd_value}")
+    return timeAndPrice
+
+
+def ticketPrice():
+    url = 'https://explorer.dcrdata.org'
+    page = urlopen(url)
+    html = page.read().decode("utf-8")
+    soup = bs(html, "html.parser")
+    ticket_ = soup.find_all(class_='int')
+    global ticket
+    ticket = ticket_[0]
+    ticket = [str(x) for x in str(ticket)]
+    index1 = ticket.index('>')
+    index2 = ticket.index('/')
+    ticket = ticket[index1 + 1:index2 - 1]
+    ticket = ''.join(ticket)
+    ticket = ticket.replace(',','')
+    global ticketUsd
+    ticketUsd = usd_value * float(ticket)
+    return ticket
+
+
+def txVol():
+    df_data = pd.concat([df_dates, df_total], axis=1)
+    df_agg2 = df_data.groupby(['Dates'], sort=False).sum()
+    df_agg2 = df_agg2.tail(31)
+    df_agg2 = df_agg2.reset_index()
+    df_agg2['Closin prices'] = pd.read_csv('usd_price.csv', delimiter = '\n')
+    dom = []
+    day = []
+    day2 = []
+    price_list = []
+    price = []
+    cleaned_list = []
+    p1 = df_agg2['Closin prices'].values.tolist()
+    for i in p1:
+        price_list.append(str(i).split(' '))
+    for i in price_list:
+        price.append(i[3])
+    for i in price:
+        indexOne = i.index('$')
+        indexTwo = i.index(']')
+        clean = i[indexOne + 1:indexTwo - 1]
+        cleaned_list.append(clean)
+    d2 = df_agg2['Dates'].values.tolist()
+    for i in d2:
+        dom.append(str(i).split(' '))
+    for i in dom:
+        day.append(i[1])
+    for i in day:
+        i2 = i[1:-2]
+        day2.append(i2)
+
+    df_agg2['day'] = pd.DataFrame(day2)
+    df_agg2['clean'] = pd.DataFrame(cleaned_list).astype(float)
+    df_agg2['USD-Val'] = df_agg2['clean'] * df_agg2['Total']
+    dates = df_agg2['day'].values.tolist()
+    N = len(dates)
+    fig, ax1 = plt.subplots()
+    t = np.arange(N)
+    s1 = df_agg2['Total']
+    ax1.plot(t, s1, 'mediumspringgreen')
+    ax1.set_xlabel('Day of Month')
+    ax1.set_ylabel('DCR (Million)', color='black')
+    ax1.tick_params('y', colors='black')
+    ax1.tick_params('x', rotation=60)
+
+    ax2 = ax1.twinx()
+    s2 = df_agg2['USD-Val']
+    ax2.plot(t, s2, 'dodgerblue')
+    ax2.set_ylabel('USD (Million)', color='black')
+    ax2.tick_params('y', colors='black')
+    dcr = mpatches.Patch(color='mediumspringgreen', label='DCR')
+    usd = mpatches.Patch(color='dodgerblue', label='USD')
+    plt.legend(handles=[dcr, usd])
+    plt.title(f'Decred on-chain TX volume {ts2} - {ts3}')
+    plt.grid(True)
+    plt.savefig('txVol.png')
 
 
 def csv_prune(doc_name):
@@ -373,8 +468,10 @@ def logic():
             {sup_display} % of Circulating Supply Mixed Yesterday (1 DCR = {usd_value} USD / {btc_val_final} BTC)
              Total staked in USD: {staked_display} #dcr $dcr #DAO #Decred #bitcoin #btc #DCRDEX"""
 
+        global df_dates
         df_dates = pd.read_csv('dates_p1.csv', delimiter = '\n')
         df_mixed = pd.read_csv('mixed_p1.csv', delimiter = '\n')
+        global df_total
         df_total = pd.read_csv('total_p1.csv', delimiter = '\n')
         df_total = df_total.div(1000000)
 
@@ -449,7 +546,28 @@ def logic():
 
         api.update_status(status = daily, media_ids=[media.media_id])
         os.remove("graph2.png")
-        print('data released.')
+        print('first batch data released.')
+        time.sleep(10)
+        tAp = utcAndUsd()
+        with open('usd_price.csv', 'a') as f:
+            f.write(str(tAp))
+            f.write("\n")
+
+        txVol()
+        ticketPrice()
+        ticketUSD = "{:,}".format(ticketUsd)
+        stakedPerc = round((stakedP), 2)
+        stakedPercentage = "{:,}".format(stakedPerc)
+        stakedRound = round((staked_val), 2)
+        stakedValue = "{:,}".format(stakedRound)
+        cspp_current = "{:,}".format(mixed_today)
+        media = api.media_upload('txVol.png')
+        daily2 = f"""{latest_date} Current Ticket Price: {ticket} $DCR / {ticketUSD} $USD  $$$
+           {stakedPercentage}% of circulating supply staked ~ {stakedValue} $DCR  **New graph in beta**
+        $dcr #DAO #Decred #eth #ethereum #bitcoin #btc #DCRDEX"""
+        api.update_status(status = daily2, media_ids=[media.media_id])
+        os.remove("txVol.png")
+        print('second batch data released.')
 
     else:
         pass
@@ -457,4 +575,3 @@ def logic():
 
 if __name__ == '__main__':
     first_check()
-
