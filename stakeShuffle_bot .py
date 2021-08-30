@@ -282,7 +282,11 @@ def txVol():
     df_agg2 = df_data.groupby(['Dates'], sort=False).sum()
     df_agg2 = df_agg2.tail(31)
     df_agg2 = df_agg2.reset_index()
-    df_agg2['Closin prices'] = pd.read_csv('usd_price.csv', delimiter = '\n')
+    colNames = ['Closin prices']
+    dfPrices = pd.read_csv('usd_price.csv', delimiter = '\n', names = colNames)
+    dfPrices = dfPrices.tail(31)
+    dfPrices = dfPrices.reset_index()
+    df_agg2['Closin prices'] = dfPrices['Closin prices']
     dom = []
     day = []
     day2 = []
@@ -560,7 +564,6 @@ def logic():
         stakedPercentage = "{:,}".format(stakedPerc)
         stakedRound = round((staked_val), 2)
         stakedValue = "{:,}".format(stakedRound)
-        cspp_current = "{:,}".format(mixed_today)
         media = api.media_upload('txVol.png')
         daily2 = f"""{latest_date} Current Ticket Price: {ticket} $DCR / {ticketUSD} $USD  $$$
            {stakedPercentage}% of circulating supply staked ~ {stakedValue} $DCR  **New graph in beta**
