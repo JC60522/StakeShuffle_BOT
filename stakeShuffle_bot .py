@@ -321,7 +321,7 @@ def txVol():
     t = np.arange(N)
     s1 = df_agg2['Total']
     ax1.plot(t, s1, 'mediumspringgreen')
-    ax1.set_xlabel('Day of Month')
+    ax1.set_xlabel('Days')
     ax1.set_ylabel('DCR (Million)', color='black')
     ax1.tick_params('y', colors='black')
     ax1.tick_params('x', rotation=60)
@@ -562,7 +562,7 @@ def logic():
         ticketUSD = "{:,}".format(ticketUsd)
         stakedPerc = round((stakedP), 2)
         stakedPercentage = "{:,}".format(stakedPerc)
-        stakedRound = round((staked_val), 2)
+        stakedRound = round(float(staked_val))
         stakedValue = "{:,}".format(stakedRound)
         media = api.media_upload('txVol.png')
         daily2 = f"""{latest_date} Current Ticket Price: {ticket} $DCR / {ticketUSD} $USD  $$$
