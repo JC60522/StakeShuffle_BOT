@@ -119,7 +119,7 @@ def coin_supply():
     coin_supply = coin_supply[18:28]
     coin_supply = str("".join(coin_supply))
     coin_supply = coin_supply.replace(',','')
-    coin_supply = float(coin_supply)
+    coin_supply = int(coin_supply)
     return coin_supply
 
 
@@ -137,6 +137,7 @@ def usd_val(mixed_today):
     usd_value = float(usd_value[3])
     global USD
     USD = round((usd_value * mixed_today))
+
 
 
 def twitter_data():
@@ -203,6 +204,7 @@ def record_check():
     return prev_rec
 
 
+
 def staked_in_usd():
     url = 'https://explorer.dcrdata.org'
     page = urlopen(url)
@@ -220,9 +222,11 @@ def staked_in_usd():
     staked_val = str("".join(staked_val))
     staked_val = staked_val.replace(',','')
     global stakedP
-    stakedP = (round(int(staked_val) / coin_supply())) * 100
+    stakedP = (int(staked_val) / coin_supply()) * 100    #####
+    stakedP = round(stakedP, 2)
     staked_usd = round(int(staked_val) * usd_value)
     return staked_usd
+
 
 
 def first_check():
@@ -274,6 +278,7 @@ def ticketPrice():
     ticket = ticket.replace(',','')
     global ticketUsd
     ticketUsd = usd_value * float(ticket)
+    ticketUsd = round(ticketUsd, 2)
     return ticket
 
 
@@ -337,6 +342,7 @@ def txVol():
     plt.title(f'Decred on-chain TX volume {ts2} - {ts3}')
     plt.grid(True)
     plt.savefig('txVol.png')
+
 
 
 def csv_prune(doc_name):
@@ -405,6 +411,7 @@ def logic():
         day_of_latest_date = latest_date.split('-')
         day_of_latest_data = day_of_latest_date[2]
 
+
         if day_of_latest_data[0] == '0':
             day_of_latest_data = day_of_latest_data[1]
         for i in mixed_by_block:
@@ -415,6 +422,7 @@ def logic():
                 new_block.append(i[-4])
                 new_total.append(i[-5])
                 new_date.append(i[-3:])
+
 
         with open('dates_p1.csv', 'a') as f:
             for i in new_date:
@@ -559,14 +567,15 @@ def logic():
 
         txVol()
         ticketPrice()
+        ticketUSD = round(int(ticketUsd),1)
         ticketUSD = "{:,}".format(ticketUsd)
-        stakedPerc = round((stakedP), 2)
-        stakedPercentage = "{:,}".format(stakedPerc)
+        stakedPercentage = "{:,}".format(stakedP)
         stakedRound = round(float(staked_val))
         stakedValue = "{:,}".format(stakedRound)
+
         media = api.media_upload('txVol.png')
         daily2 = f"""{latest_date} Current Ticket Price: {ticket} $DCR / {ticketUSD} $USD  $$$
-           {stakedPercentage}% of circulating supply staked ~ {stakedValue} $DCR  **New graph in beta**
+         {stakedPercentage}% of circulating supply staked ~ {stakedValue} $DCR  **New graph in beta**
         $dcr #DAO #Decred #eth #ethereum #bitcoin #btc #DCRDEX"""
         api.update_status(status = daily2, media_ids=[media.media_id])
         os.remove("txVol.png")
