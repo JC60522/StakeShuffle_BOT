@@ -336,6 +336,8 @@ def txVol():
     ax2.plot(t, s2, 'dodgerblue')
     ax2.set_ylabel('USD (Million)', color='black')
     ax2.tick_params('y', colors='black')
+    plt.xticks(rotation=60)
+    plt.xticks(np.arange(len(dates_xaxis)), dates_xaxis)
     dcr = mpatches.Patch(color='mediumspringgreen', label='DCR')
     usd = mpatches.Patch(color='dodgerblue', label='USD')
     plt.legend(handles=[dcr, usd])
@@ -532,6 +534,7 @@ def logic():
         df_final['day2'] = df_final['day2'].astype(int)
         print(df_final)
 
+        global dates_xaxis
         dates_xaxis = df_final['day2'].values.tolist()
         dates_new = df_final['Dates_new'].values.tolist()
         f2 = dates_new[0]
