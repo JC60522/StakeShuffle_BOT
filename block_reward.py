@@ -22,19 +22,38 @@ def main_b():
     html = page.read().decode("utf-8")
     soup = bs(html, "html.parser")
     reward = soup.find_all(class_="int")
+    reward_decimals = soup.find_all(class_="decimal")
+
     pow_reward = reward[-4]
+    pow_reward_dec = reward_decimals[-4]
     pow_reward = [str(i) for i in str(pow_reward)]
+    pow_reward_dec = [str(i) for i in str(pow_reward_dec)]
     pow_reward = pow_reward[18:-7]
-    pow_reward = ''.join(pow_reward)
+    pow_reward_dec = pow_reward_dec[22:-7]
+    pow_reward = str(''.join(pow_reward))
+    pow_reward_dec = str(''.join(pow_reward_dec))
+    pow_reward = pow_reward + pow_reward_dec
+
     treasury_reward = reward[-1]
+    treasury_reward_dec = reward_decimals[-2]
     treasury_reward = [str(i) for i in str(treasury_reward)]
+    treasury_reward_dec = [str(i) for i in str(treasury_reward_dec)]
     treasury_reward = treasury_reward[18:-7]
-    treasury_reward = ''.join(treasury_reward)
+    treasury_reward_dec = treasury_reward_dec[22:-7]
+    treasury_reward = str(''.join(treasury_reward))
+    treasury_reward_dec = str(''.join(treasury_reward_dec))
+    treasury_reward = treasury_reward + treasury_reward_dec
+
     vote_reward = reward[-8]
+    vote_reward_dec = reward_decimals[-8]
     vote_reward = [str(i) for i in str(vote_reward)]
+    vote_reward_dec = [str(i) for i in str(vote_reward_dec)]
     vote_reward = vote_reward[18:-7]
-    vote_reward = ''.join(vote_reward)
-    total_reward = float(pow_reward) + float(vote_reward) + float(treasury_reward)
+    vote_reward_dec = vote_reward_dec[22:-7]
+    vote_reward = str(''.join(vote_reward))
+    vote_reward_dec = str(''.join(vote_reward_dec))
+    vote_reward = vote_reward + vote_reward_dec
+    total_reward = round(float(pow_reward) + float(vote_reward) + float(treasury_reward), 3)
 
     with open('reward.txt', 'r+') as f:
         data = f.read()
@@ -45,11 +64,14 @@ def main_b():
         with open('reward.txt', 'a') as f:
             f.write(str(total_reward))
             f.write('\n')
-
-        new_reward = "{:,}".format(float(total_reward))
-        vote = "{:,}".format(float(vote_reward))
-        pow_ = "{:,}".format(float(pow_reward))
-        treasury = "{:,}".format(float(treasury_reward))
+        total_reward = round(total_reward, 3)
+        vote_reward = round(float(vote_reward), 3)
+        pow_reward = round(float(pow_reward), 3)
+        treasury_reward = round(float(treasury_reward), 3)
+        new_reward = "{:,}".format(total_reward)
+        vote = "{:,}".format(vote_reward)
+        pow_ = "{:,}".format(pow_reward)
+        treasury = "{:,}".format(treasury_reward)
 
         tweet = f'''{tweet_date()} #Decred Block Reward Reduced to $DCR {new_reward} per Block. New Block Reward allocation: ~ Miners: $DCR {pow_} ~
         Voters: $DCR {vote} ~ Treasury: $DCR {treasury} ~ $dcr #DAO #Decred #eth #ethereum #bitcoin #btc #DCRDEX #Scarcity'''
