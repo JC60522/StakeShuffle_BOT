@@ -26,7 +26,7 @@ def config():
         miner_capacity = (data['miner_capacity'])
         miner_cost = (data['miner_cost'])
         miner_input = (data['miner_watts'])
-        facility_cost = (data['facility_est'])
+        facility_cost = float((data['facility_est'])) / 100
     return elec, miner_capacity, miner_cost, miner_input, facility_cost
 
 
@@ -40,7 +40,7 @@ def capex(hash_rate, usd_rate, staked):
 
 def opex(hash_rate):
     cost_of_elec = (round(hash_rate / float(config()[1]) * float(config()[3]))) * float(config()[0])
-    facility_cost = cost_of_miners * 0.05
+    facility_cost = cost_of_miners * config()[4]
     global opex_
     opex_ = cost_of_elec + facility_cost
 
@@ -56,9 +56,9 @@ def construct(supply, staked, usd_value, hash_rate):
     opex_display = "{:,}".format(opex_)
 
     body = f"""{tweet_date()} At {usd_value} USD/DCR & electricity cost of {elec} USD/KW with DCR5 miners you'll need to add #rate of {hash_rate} Ph/s and stake $DCR {staked_display} to attack the #Decred network for 1 hour. Attack cost~ Capex: {capex_display} USD | Opex: {opex_display} USD ~{attack_viability} #btc"""
-    #api.update_status(status=body)
-    print(body)
+    api.update_status(status=body)
 
+    
 def main_a():
     url = 'https://explorer.dcrdata.org'
     page = urlopen(url)
