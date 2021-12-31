@@ -222,7 +222,7 @@ def staked_in_usd():
     staked_val = str("".join(staked_val))
     staked_val = staked_val.replace(',','')
     global stakedP
-    stakedP = (int(staked_val) / coin_supply()) * 100    #####
+    stakedP = (int(staked_val) / coin_supply()) * 100
     stakedP = round(stakedP, 2)
     staked_usd = round(int(staked_val) * usd_value)
     return staked_usd
@@ -351,6 +351,8 @@ def csv_prune(doc_name):
     with open(doc_name, 'r+') as f:
         data = f.read()
         data = data.split('\n')
+        data.pop()
+        header = data[0]
         if len(data) > 36000:
             for i in range(0, 18000):
                 data.reverse()
@@ -359,6 +361,8 @@ def csv_prune(doc_name):
             with open(doc_name, 'r+') as f:
                 f.truncate(0)
                 f.seek(0)
+                f.write(header)
+                f.write("\n")
                 for i in data:
                     f.write(str(i))
                     f.write("\n")
