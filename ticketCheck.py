@@ -75,25 +75,35 @@ def ticketVote(senderId, senderText):
         print(updatedCsv)
         for newTxs in updatedCsv:
             try:
-                commaIndex = newTxs.index(',') 
+                commaIndex = newTxs.index(',')
                 tx1 = newTxs[commaIndex +1:]
                 url = 'https://explorer.dcrdata.org/tx/' + str(tx1)
+                votedIndex = updatedCsv.index(newTxs)
+                id1 = newTxs[:commaIndex]
+                ticketRoute = 'https://explorer.dcrdata.org/tx/' + str(tx1)
                 try:
                     page = urlopen(url)
                     html = page.read().decode("utf-8")
                     soup = bs(html, "html.parser")
-                    
-                    status = soup.find_all("td", class_="text-left py-1 text-secondary")
-                    tags = str(status).split(',')
-                    new = []
-                    for i in tags:
-                        i.replace(' ', '').replace('\n', '')
-                        e_index = str(i[::-1]).index('=')
-                        if i[-e_index:-e_index+14] == '"tx.statusMsg"':
-                            new.append(i[-e_index+14:])
-                            break
-                    ticketStatus = str(new).replace(' ', '').replace('\\n', '').replace('</td>', '').replace('>', '')[2:-2]
 
+                    try:
+                        status = soup.find_all("td", class_="text-left py-1 text-secondary")
+                        tags = str(status).split(',')
+                        new = []
+                        for i in tags:
+                            i.replace(' ', '').replace('\n', '')
+                            e_index = str(i[::-1]).index('=')
+                            if i[-e_index:-e_index+14] == '"tx.statusMsg"':
+                                new.append(i[-e_index+14:])
+                                break
+                        ticketStatus = str(new).replace(' ', '').replace('\\n', '').replace('</td>', '').replace('>', '')[2:-2]
+                        if ticketStatus == 'Voted':
+                            print(id1 + ' Ticket ' + tx1 + ' voted')
+                            api.send_direct_message(id1, f'Ticket {ticketRoute} has Voted.')
+                            updatedCsv.pop(votedIndex)
+                            editAndRewrite(newTxs)
+                    except Exception as e:
+                        print(e)
                     status2 = soup.find_all(class_="h5 d-inline-block pl-1")
                     status2 = [str(x) for x in str(status2)]
                     smallerThanIndex = status2.index('<')
@@ -104,15 +114,12 @@ def ticketVote(senderId, senderText):
                     revokedStatus = str(''.join(revokedStatus))
 
                     time.sleep(5)
-                    votedIndex = updatedCsv.index(newTxs)
-                    id1 = newTxs[:commaIndex]
-                    ticketRoute = 'https://explorer.dcrdata.org/tx/' + str(tx1)
-                    if ticketStatus == 'Voted':
-                        print(id1 + ' Ticket ' + tx1 + ' voted')
-                        api.send_direct_message(id1, f'Ticket {ticketRoute} has Voted.') 
+                    if revokedStatus == 'Vote':
+                        print(id1 + ' Ticket ' + tx1 + ' has been Voted')
+                        api.send_direct_message(id1, f'Ticket {ticketRoute} has Voted.')
                         updatedCsv.pop(votedIndex)
                         editAndRewrite(newTxs)
-                    if revokedStatus == 'Revocation':
+                    elif revokedStatus == 'Revocation':
                         print(id1 + ' Ticket ' + tx1 + ' has been Revoked')
                         api.send_direct_message(id1, f'Ticket {ticketRoute} has been Revoked.')
                         updatedCsv.pop(votedIndex)
@@ -132,11 +139,11 @@ def ticketVote(senderId, senderText):
         reset()
     except:
         print('Seems like there are no new valid ticket queries in the inbox..')
-        reset()         
-                     
+        reset()
+
 if __name__ == '__main__':
     inboxCheck()
-    ticketVote(senderId, senderText)             
+    ticketVote(senderId, senderText)   
                                      
             
         
