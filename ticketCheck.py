@@ -82,24 +82,37 @@ def ticketVote(senderId, senderText):
                     page = urlopen(url)
                     html = page.read().decode("utf-8")
                     soup = bs(html, "html.parser")
-                    status = soup.find_all(class_="h5 d-inline-block pl-1")
-                    status = [str(x) for x in str(status)]
-                    smallerThanIndex = status.index('<')
-                    status.pop(smallerThanIndex)
-                    s_t_index = status.index('<')
-                    b_t_index = status.index('>')
-                    ticketStatus = status[b_t_index+1:s_t_index]
-                    ticketStatus = str(''.join(ticketStatus))
+                    
+                    status = soup.find_all("td", class_="text-left py-1 text-secondary")
+                    tags = str(status).split(',')
+                    new = []
+                    for i in tags:
+                        i.replace(' ', '').replace('\n', '')
+                        e_index = str(i[::-1]).index('=')
+                        if i[-e_index:-e_index+14] == '"tx.statusMsg"':
+                            new.append(i[-e_index+14:])
+                            break
+                    ticketStatus = str(new).replace(' ', '').replace('\\n', '').replace('</td>', '').replace('>', '')[2:-2]
+
+                    status2 = soup.find_all(class_="h5 d-inline-block pl-1")
+                    status2 = [str(x) for x in str(status2)]
+                    smallerThanIndex = status2.index('<')
+                    status2.pop(smallerThanIndex)
+                    s_t_index = status2.index('<')
+                    b_t_index = status2.index('>')
+                    revokedStatus = status2[b_t_index+1:s_t_index]
+                    revokedStatus = str(''.join(revokedStatus))
+
                     time.sleep(5)
                     votedIndex = updatedCsv.index(newTxs)
                     id1 = newTxs[:commaIndex]
                     ticketRoute = 'https://explorer.dcrdata.org/tx/' + str(tx1)
-                    if ticketStatus == 'Vote':
+                    if ticketStatus == 'Voted':
                         print(id1 + ' Ticket ' + tx1 + ' voted')
                         api.send_direct_message(id1, f'Ticket {ticketRoute} has Voted.') 
                         updatedCsv.pop(votedIndex)
                         editAndRewrite(newTxs)
-                    elif ticketStatus == 'Revocation':
+                    if revokedStatus == 'Revocation':
                         print(id1 + ' Ticket ' + tx1 + ' has been Revoked')
                         api.send_direct_message(id1, f'Ticket {ticketRoute} has been Revoked.')
                         updatedCsv.pop(votedIndex)
@@ -123,7 +136,8 @@ def ticketVote(senderId, senderText):
                      
 if __name__ == '__main__':
     inboxCheck()
-    ticketVote(senderId, senderText)                        
+    ticketVote(senderId, senderText)             
+                                     
             
         
         
