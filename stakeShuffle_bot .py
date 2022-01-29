@@ -54,7 +54,7 @@ def date_time(date):
     total_sent = total_sent.replace(',', '')
     total_sent = round(float(total_sent))
 
-    block = soup_main.find_all(class_="h5 d-inline-block pl-2")
+    block = soup_main.find_all(class_="h5 d-inline-block ps-2")
     block = [str(x) for x in str(block)]
     block = str(block[2:])
     first_index = block.index('#')
@@ -76,7 +76,7 @@ def mixed_date_time(route):
     html_main = page.read().decode("utf-8")
     global soup_main
     soup_main = bs(html_main, "html.parser")
-    date = soup_main.find_all(class_="fs18 font-weight-bold lh1rem d-inline-block pt-1")
+    date = soup_main.find_all(class_="fs18 fw-bold lh1rem d-inline-block pt-1")
     date = [str(x) for x in str(date)]
     date = date[-20:-8]
     try:
@@ -469,7 +469,7 @@ def logic():
         page3 = urlopen(url3)
         html3 = page3.read().decode("utf-8")
         soup3 = bs(html3, "html.parser")
-        btc_value = soup3.find_all(class_="pl-3 fs16 py-2 text-right")
+        btc_value = soup3.find_all(class_="ps-3 fs16 py-2 text-end")
         btc_sliced_val = list(btc_value[-1])
         btc_sliced_val = [str(x) for x in str(btc_sliced_val)]
         prior_index = btc_sliced_val.index('0')
