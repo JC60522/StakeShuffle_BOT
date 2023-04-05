@@ -17,7 +17,7 @@ def tweet_date():
 
 
 def main_b():
-    url = 'https://explorer.dcrdata.org'
+    url = 'https://dcrdata.decred.org'
     page = urlopen(url)
     html = page.read().decode("utf-8")
     soup = bs(html, "html.parser")
@@ -74,7 +74,7 @@ def main_b():
         treasury = "{:,}".format(treasury_reward)
 
         tweet = f'''{tweet_date()} #Decred Block Reward Reduced to $DCR {new_reward} per Block. New Block Reward allocation: ~ Miners: $DCR {pow_} ~
-        Voters: $DCR {vote} ~ Treasury: $DCR {treasury} ~ $dcr #DAO #Decred #eth #ethereum #bitcoin #btc #DCRDEX #Scarcity'''
+        Voters: $DCR {vote} ~ Treasury: $DCR {treasury} '''
         print(tweet)
         api.update_status(status=tweet)
 
