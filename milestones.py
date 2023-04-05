@@ -36,7 +36,7 @@ def wrangle(html_string):
 
 
 def request_explorer():
-    url = 'https://explorer.dcrdata.org'
+    url = 'https://dcrdata.decred.org'
     try:
         page = urlopen(url)
     except:
@@ -67,7 +67,7 @@ def main_f():
     if int(request_explorer()[0]) >= prev_m_check:
         m_display = "{:,}".format(int(request_explorer()[0]))
         m_display_sights = "{:,}".format(next_m)
-        tweet_mined = f'{tweet_date()} New $Decred Supply Milestone reached! A Total of {m_display} $DCR have been mined! -> Next Milestone in sight is {m_display_sights} $DCR    $dcr #DAO #Decred #eth #ethereum #bitcoin #btc #DCRDEX'
+        tweet_mined = f'{tweet_date()} New #Decred Supply Milestone reached! A Total of {m_display} $DCR have been mined! -> Next Milestone in sight is {m_display_sights} $DCR'
         print(tweet_mined)
         api.update_status(status=tweet_mined)
         edit_config(prev_treasury, prev_m_check)
@@ -75,7 +75,7 @@ def main_f():
     if int(request_explorer()[1]) >= prev_t_check:
         t_display = "{:,}".format(int(request_explorer()[1]))
         t_display_sights = "{:,}".format(next_t)
-        tweet_treasury = f'{tweet_date()} New $Decred Supply Milestone reached! The #Decred treasury have just increased to {t_display} $DCR -> Next Milestone in sight is {t_display_sights} $DCR    $dcr #DAO #Decred #eth #ethereum #bitcoin #btc #DCRDEX'
+        tweet_treasury = f'{tweet_date()} New #Decred Supply Milestone reached! The #Decred treasury have just increased to {t_display} $DCR -> Next Milestone in sight is {t_display_sights} $DCR'
         print(tweet_treasury)
         api.update_status(status=tweet_treasury)
         if altered:

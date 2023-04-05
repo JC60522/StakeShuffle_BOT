@@ -225,7 +225,7 @@ def update():
         for i in range(start_block, end_block):
             url_block.append(int(i) + 1)
         for i in url_block:
-            list_of_300_urls.append('https://explorer.dcrdata.org/block/' + str(i))
+            list_of_300_urls.append('https://dcrdata.decred.org/block/' + str(i))
         
         with Bar('Updating....', max=N) as bar:
             for route in list_of_300_urls:

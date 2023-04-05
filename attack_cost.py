@@ -55,12 +55,12 @@ def construct(supply, staked, usd_value, hash_rate):
     capex_display = "{:,}".format(capex_)
     opex_display = "{:,}".format(opex_)
 
-    body = f"""{tweet_date()} At {usd_value} USD/DCR & electricity cost of {elec} USD/KW with DCR5 miners you'll need to add #rate of {hash_rate} Ph/s and stake $DCR {staked_display} to attack the #Decred network for 1 hour. Attack cost~ Capex: {capex_display} USD | Opex: {opex_display} USD ~{attack_viability} #btc"""
+    body = f"""{tweet_date()} At {usd_value} USD/DCR & electricity cost of {elec} USD/KW with DCR5 miners you'll need to add #rate of {hash_rate} Ph/s and stake $DCR {staked_display} to attack the #Decred network for 1 hour. Attack cost~ Capex: {capex_display} USD | Opex: {opex_display} USD ~{attack_viability}"""
     api.update_status(status=body)
 
     
 def main_a():
-    url = 'https://explorer.dcrdata.org'
+    url = 'https://dcrdata.decred.org'
     page = urlopen(url)
     html = page.read().decode("utf-8")
     soup = bs(html, "html.parser")
