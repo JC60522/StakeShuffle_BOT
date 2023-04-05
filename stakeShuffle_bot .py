@@ -15,7 +15,7 @@ auth.set_access_token('#################-#################', '##################
 api = tweepy.API(auth, wait_on_rate_limit=True)
 
 def proposed_block_url():
-    url = 'https://explorer.dcrdata.org'
+    url = 'https://dcrdata.decred.org'
     try:
         page = urlopen(url)
     except:
@@ -206,7 +206,7 @@ def record_check():
 
 
 def staked_in_usd():
-    url = 'https://explorer.dcrdata.org'
+    url = 'https://dcrdata.decred.org'
     page = urlopen(url)
     html = page.read().decode("utf-8")
     soup = bs(html, "html.parser")
@@ -263,7 +263,7 @@ def utcAndUsd():
 
 
 def ticketPrice():
-    url = 'https://explorer.dcrdata.org'
+    url = 'https://dcrdata.decred.org'
     page = urlopen(url)
     html = page.read().decode("utf-8")
     soup = bs(html, "html.parser")
@@ -398,7 +398,7 @@ def logic():
             url_block.append(int(i) + 1)
         print('determined block range')
         for i in url_block:
-            list_of_300_urls.append('https://explorer.dcrdata.org/block/' + str(i))
+            list_of_300_urls.append('https://dcrdata.decred.org/block/' + str(i))
         print('appended urls to list complete. Scraping urls...est 40min remaining if no errors occur..')
         for route in list_of_300_urls:
             mixed_by_block.append(list(mixed_date_time(route)))
@@ -465,7 +465,7 @@ def logic():
         sup_display = "{:,}".format(mixed_by_supply)
         staked_display = "{:,}".format(staked_in_usd())
 
-        url3 = 'https://explorer.dcrdata.org/market?chart=depth&xc=aggregated&bin=1h&stack=1'
+        url3 = 'https://dcrdata.decred.org/market?chart=depth&xc=aggregated&bin=1h&stack=1'
         page3 = urlopen(url3)
         html3 = page3.read().decode("utf-8")
         soup3 = bs(html3, "html.parser")
@@ -478,13 +478,13 @@ def logic():
         btc_val_final = str(''.join(btc_val))
 
         if mixed_today > record_check():
-            daily = f"""{latest_date} StakeShuffle transaction volume was: {cspp_current} $DCR / {usd_display} $USD
+            daily = f"""{latest_date} #Decred StakeShuffle transaction volume was: {cspp_current} $DCR / {usd_display} $USD
             {sup_display} % of Circulating Supply Mixed Yesterday *NEW ATH!! (1 DCR = {usd_value} USD / {btc_val_final} BTC)
-             Total staked in USD: {staked_display} #dcr $dcr #DAO #Decred #bitcoin #btc #DCRDEX"""
+             Total staked in USD: {staked_display}"""
         else:
-            daily = f"""{latest_date} StakeShuffle transaction volume was: {cspp_current} $DCR / {usd_display} $USD
+            daily = f"""{latest_date} #Decred StakeShuffle transaction volume was: {cspp_current} $DCR / {usd_display} $USD
             {sup_display} % of Circulating Supply Mixed Yesterday (1 DCR = {usd_value} USD / {btc_val_final} BTC)
-             Total staked in USD: {staked_display} #dcr $dcr #DAO #Decred #bitcoin #btc #DCRDEX"""
+             Total staked in USD: {staked_display}"""
 
         global df_dates
         df_dates = pd.read_csv('dates_p1.csv', delimiter = '\n')
@@ -581,9 +581,8 @@ def logic():
         stakedValue = "{:,}".format(stakedRound)
 
         media = api.media_upload('txVol.png')
-        daily2 = f"""{latest_date} Current Ticket Price: {ticket} $DCR / {ticketUSD} $USD  $$$
-         {stakedPercentage}% of circulating supply staked ~ {stakedValue} $DCR  **New graph in beta**
-        $dcr #DAO #Decred #eth #ethereum #bitcoin #btc #DCRDEX"""
+        daily2 = f"""{latest_date} Current #Decred Ticket Price: {ticket} $DCR / {ticketUSD} $USD  $$$
+         {stakedPercentage}% of circulating supply staked ~ {stakedValue} $DCR  **New graph in beta**"""
         api.update_status(status = daily2, media_ids=[media.media_id])
         os.remove("txVol.png")
         print('second batch data released.')
