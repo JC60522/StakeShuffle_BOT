@@ -77,10 +77,10 @@ def ticketVote(senderId, senderText):
             try:
                 commaIndex = newTxs.index(',')
                 tx1 = newTxs[commaIndex +1:]
-                url = 'https://explorer.dcrdata.org/tx/' + str(tx1)
+                url = 'https://dcrdata.decred.org/tx/' + str(tx1)
                 votedIndex = updatedCsv.index(newTxs)
                 id1 = newTxs[:commaIndex]
-                ticketRoute = 'https://explorer.dcrdata.org/tx/' + str(tx1)
+                ticketRoute = 'https://dcrdata.decred.org/tx/' + str(tx1)
                 try:
                     page = urlopen(url)
                     html = page.read().decode("utf-8")
@@ -130,7 +130,7 @@ def ticketVote(senderId, senderText):
                     commaIndex = newTxs.index(',')
                     id1 = newTxs[:commaIndex]
                     tx1 = newTxs[commaIndex +1:]
-                    ticketRoute = 'https://explorer.dcrdata.org/tx/' + str(tx1)
+                    ticketRoute = 'https://dcrdata.decred.org/tx/' + str(tx1)
                     api.send_direct_message(id1, f'Transaction id {ticketRoute} invalid/not found.')
                     editAndRewrite(newTxs)
                     reset()
