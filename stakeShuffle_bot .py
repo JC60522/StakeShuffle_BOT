@@ -109,7 +109,7 @@ def mixed_date_time(route):
 
 
 def coin_supply():
-    url = 'https://explorer.dcrdata.org'
+    url = 'https://dcrdata.decred.org'
     page = urlopen(url)
     html = page.read().decode("utf-8")
     soup = bs(html, "html.parser")
@@ -124,17 +124,11 @@ def coin_supply():
 
 
 def usd_val(mixed_today):
-    url = 'https://explorer.dcrdata.org'
-    page = urlopen(url)
-    html = page.read().decode("utf-8")
-    soup = bs(html, "html.parser")
+    url = "https://api.coingecko.com/api/v3/simple/price?ids=decred&vs_currencies=usd"
+    response = urlopen(url).status_code
+    data = json.loads(response.read())
     global usd_value
-    usd_value = soup.get_text('Exchange Rate')
-    usd_value = usd_value.split('\n')
-    usd_value = usd_value[-27]
-    usd_value = usd_value.lower()
-    usd_value = usd_value.split('e')
-    usd_value = float(usd_value[3])
+    usd_value = data['decred']['usd']
     global USD
     USD = round((usd_value * mixed_today))
 
